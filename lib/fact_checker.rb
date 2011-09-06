@@ -1,5 +1,4 @@
 require "fact_checker/version"
+require "fact_checker/base"
 
-module FactChecker
-  # Your code goes here...
-end
+class FactChecker::Error < StandardError; end
