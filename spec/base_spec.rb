@@ -1,20 +1,24 @@
-require 'fact_checker'
+require 'fact_checker/base'
 
 describe FactChecker::Base do
   describe "constructor" do
-    it "should accept facts, deppendencies and requirements as arguments" do
+    it "should accept facts, dependencies and requirements as arguments" do
       fc = FactChecker::Base.new([:a, :b], {:a => :b}, {:b => :nil?})
-      fc.facts.should          == [:a, :b]
-      fc.deppendencies.should  == {:a => :b}
-      fc.requirements.should   == {:b => :nil?}
+      fc.facts.should         == [:a, :b]
+      fc.dependencies.should  == {:a => :b}
+      fc.requirements.should  == {:b => :nil?}
     end
     it "should use empty hash as a default for requirements" do
       fc = FactChecker::Base.new([:a, :b], {:a => :b})
       fc.requirements.should == {}
     end
-    it "should use empty hash as a default for deppendencies" do
+    it "should use empty hash as a default for dependencies" do
       fc = FactChecker::Base.new([:a, :b])
-      fc.deppendencies.should == {}
+      fc.dependencies.should == {}
+    end
+    it "should use empty array as a default for facts" do
+      fc = FactChecker::Base.new()
+      fc.facts.should == []
     end
   end
 
@@ -51,55 +55,105 @@ describe FactChecker::Base do
       fc = FactChecker::Base.new([:f1], nil, {:f1 => lambda{true}})
       fc.requirement_satisfied_for?(nil, :f1).should be_true
     end
-    it "should raise FactChecker::Error if requirement has wrong type" do
+    it "should raise RuntimeError if requirement has wrong type" do
       fc = FactChecker::Base.new([:f1], nil, {:f1 => "wrong"})
-      lambda{fc.requirement_satisfied_for?(nil, :f1)}.should raise_error(FactChecker::Error)
+      lambda{fc.requirement_satisfied_for?(nil, :f1)}.should raise_error(RuntimeError)
+    end
+  end
+
+  describe "#fact_acomplished?" do
+    it "should return false if fact is unknown" do
+      fc = FactChecker::Base.new([:f2], nil, {:f1 => :nil?})
+      fc.fact_accomplished?(nil, :f1).should be_false
+    end
+    it "should return true if requirement satisfied and fact has no dependencies" do
+      fc = FactChecker::Base.new([:f1], nil, {:f1 => lambda{|o| o.size > 2}})
+      fc.fact_accomplished?("name", :f1).should be_true
+    end
+    it "should return false if requirement not satisfied (fact has no dependencies)" do
+      fc = FactChecker::Base.new([:f1], nil, {:f1 => :nil?})
+      fc.fact_accomplished?("something", :f1).should be_false
+    end
+    it "should return false if fact has unsatisfied dependencies" do
+      fc = FactChecker::Base.new([:f1, :f2], {:f1 => :f2}, {:f2 => :nil?})
+      fc.fact_accomplished?("something", :f1).should be_false
+    end
+    it "should return false if fact has both satisfied and unsatisfied dependencies" do
+      fc = FactChecker::Base.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f2 => :size, :f3 => :size, :f4 => :nil?})
+      fc.fact_accomplished?("something", :f1).should be_false
+    end
+    it "should return true if all requirements are satisfied and fact has no requirements" do
+      fc = FactChecker::Base.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f2 => :size, :f3 => :size, :f4 => :size})
+      fc.fact_accomplished?("something", :f1).should be_true
+    end
+    it "should return false if requirements not satisfied (all dependencies are satisfied)" do
+      fc = FactChecker::Base.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f1 => :nil?, :f2 => :size, :f3 => :size, :f4 => :size})
+      fc.fact_accomplished?("something", :f1).should be_false
+    end
+  end
+
+  describe "#fact_possible?" do
+    it "should return true if fact is unknown" do
+      fc = FactChecker::Base.new([:f2], nil, {:f1 => :nil?})
+      fc.fact_possible?(nil, :f1).should be_true
+    end
+    it "should return true if dependencies satisfied (even if requirement is not satisfied)" do
+      fc = FactChecker::Base.new([:f1], nil, {:f1 => :nil?})
+      fc.fact_possible?(1, :f1).should be_true
+    end
+    it "should return false if dependencies unsatisfied (even if requirement is satisfied)" do
+      fc = FactChecker::Base.new([:f1], {:f1 => :f2}, {:f2 => :nil?})
+      fc.fact_possible?(1, :f1).should be_false
+    end
+  end
+
+  describe "#define_fact" do
+    before(:each) do
+      @fc = FactChecker::Base.new
     end
 
-    describe "#fact_acomplished?" do
-      it "should return false if fact is unknown" do
-        fc = FactChecker::Base.new([:f2], nil, {:f1 => :nil?})
-        fc.fact_accomplished?(nil, :f1).should be_false
-      end
-      it "should return true if requirement satisfied and fact has no deppendencies" do
-        fc = FactChecker::Base.new([:f1], nil, {:f1 => lambda{|o| o.size > 2}})
-        fc.fact_accomplished?("name", :f1).should be_true
-      end
-      it "should return false if requirement not satisfied (fact has no deppendencies)" do
-        fc = FactChecker::Base.new([:f1], nil, {:f1 => :nil?})
-        fc.fact_accomplished?("something", :f1).should be_false
-      end
-      it "should return false if fact has unsatisfied deppendencies" do
-        fc = FactChecker::Base.new([:f1, :f2], {:f1 => :f2}, {:f2 => :nil?})
-        fc.fact_accomplished?("something", :f1).should be_false
-      end
-      it "should return false if fact has both satisfied and unsatisfied deppendencies" do
-        fc = FactChecker::Base.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f2 => :size, :f3 => :size, :f4 => :nil?})
-        fc.fact_accomplished?("something", :f1).should be_false
-      end
-      it "should return true if all requirements are satisfied and fact has no requirements" do
-        fc = FactChecker::Base.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f2 => :size, :f3 => :size, :f4 => :size})
-        fc.fact_accomplished?("something", :f1).should be_true
-      end
-      it "should return false if requirements not satisfied (all deppendencies are satisfied)" do
-        fc = FactChecker::Base.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f1 => :nil?, :f2 => :size, :f3 => :size, :f4 => :size})
-        fc.fact_accomplished?("something", :f1).should be_false
-      end
+    it "should add argument to facts when called with (:fact)" do
+      @fc.define_fact(:f1)
+      @fc.define_fact(:f2)
+      @fc.facts.should == [:f1, :f2]
     end
 
-    describe "#fact_possible?" do
-      it "should return true if fact is unknown" do
-        fc = FactChecker::Base.new([:f2], nil, {:f1 => :nil?})
-        fc.fact_possible?(nil, :f1).should be_true
-      end
-      it "should return true if deppendencies satisfied (even if requirement is not satisfied)" do
-        fc = FactChecker::Base.new([:f1], nil, {:f1 => :nil?})
-        fc.fact_possible?(1, :f1).should be_true
-      end
-      it "should return false if deppendencies unsatisfied (even if requirement is satisfied)" do
-        fc = FactChecker::Base.new([:f1], {:f1 => :f2}, {:f2 => :nil?})
-        fc.fact_possible?(1, :f1).should be_false
-      end
+    it "should define fact correctly when called with (:fact, :if => :requirement)" do
+      @fc.define_fact(:f1)
+      @fc.define_fact(:f2, :if => :nil?)
+      @fc.facts.should == [:f1, :f2]
+      @fc.requirements[:f2].should == :nil?
+    end
+
+    it "should define fact correctly when called with (:fact => :dependency)" do
+      @fc.define_fact(:f1)
+      @fc.define_fact(:f2 => :f1)
+      @fc.facts.should == [:f1, :f2]
+      @fc.dependencies[:f2].should == :f1
+    end
+
+    it "should define fact correctly when called with (:fact => :dependency, :if => :requirement)" do
+      @fc.define_fact(:f1)
+      @fc.define_fact(:f2 => :f1, :if => :nil?)
+      @fc.facts.should == [:f1, :f2]
+      @fc.dependencies[:f2].should == :f1
+      @fc.requirements[:f2].should == :nil?
+    end
+
+    it "should redefine fact if a fact with a given name already exists" do
+      @fc.define_fact(:f1 => :f2, :if => :nil?)
+      @fc.define_fact(:f1)
+      @fc.facts.should == [:f1]
+      @fc.requirements[:f1].should be_nil
+      @fc.dependencies[:f1].should be_nil
+    end
+
+    it "should raise ArgumentError exception when called with wrong arguments" do
+      lambda{ @fc.define_fact() }.should raise_error(ArgumentError)
+      lambda{ @fc.define_fact(:f1, {:if => :nil?}, true) }.should raise_error(ArgumentError)
+      lambda{ @fc.define_fact(:f1, :f2) }.should raise_error(ArgumentError)
+      lambda{ @fc.define_fact({:if => :nil?}, :f1) }.should raise_error(ArgumentError)
+      lambda{ @fc.define_fact(:f1 => :f2, :if => :nil?, :something_else => true) }.should raise_error(ArgumentError)
     end
   end
 end
