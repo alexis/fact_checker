@@ -1,4 +1,4 @@
-require 'fact_checker/base'
+require 'spec_helper'
 
 describe FactChecker::Base do
   describe "constructor" do
