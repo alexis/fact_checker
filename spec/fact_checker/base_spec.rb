@@ -61,7 +61,7 @@ describe FactChecker::Base do
     end
   end
 
-  describe "#fact_acomplished?" do
+  describe "#fact_accomplished?" do
     it "should return false if fact is unknown" do
       fc = FactChecker::Base.new([:f2], nil, {:f1 => :nil?})
       fc.fact_accomplished?(nil, :f1).should be_false

@@ -19,8 +19,8 @@ describe 'FactChecker' do
     describe 'instance of FactTest' do
       let(:fact_test) { FactTest.new }
 
-      specify '#step_acomplished?' do
-        fact_test.should respond_to :step_acomplished?
+      specify '#step_accomplished?' do
+        fact_test.should respond_to :step_accomplished?
       end
 
       specify '#step_possible?' do
@@ -35,8 +35,8 @@ describe 'FactChecker' do
         fact_test.should respond_to :possible_steps
       end
 
-      specify '#acomplished_steps' do
-        fact_test.should respond_to :acomplished_steps
+      specify '#accomplished_steps' do
+        fact_test.should respond_to :accomplished_steps
       end
     end
   end

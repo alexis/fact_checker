@@ -17,7 +17,7 @@ module FactChecker
     end
   end
 
-  def step_acomplished?(step)
+  def step_accomplished?(step)
   end
 
   def step_possible?(step)
@@ -29,6 +29,6 @@ module FactChecker
   def possible_steps(step)
   end
 
-  def acomplished_steps(step)
+  def accomplished_steps(step)
   end
 end
