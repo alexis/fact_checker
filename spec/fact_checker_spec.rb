@@ -21,7 +21,7 @@ describe 'FactChecker' do
       class FactTest
         def_fact :fact_test1
       end
-      FactTest.fact_checker.facts.should == [[:fact_test1]]
+      FactTest.fact_checker.facts.should == [:fact_test1]
     end
 
     describe 'instance of FactTest' do
@@ -29,7 +29,7 @@ describe 'FactChecker' do
 
       specify '#facts' do
         fact_test.should respond_to :facts
-        fact_test.facts.should == [[:fact_test1]]
+        fact_test.facts.should == [:fact_test1]
       end
 
       specify '#fact_on?' do
