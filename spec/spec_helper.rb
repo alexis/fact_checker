@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # encoding: utf-8
 
 Dir['./spec/support/**/*.rb'].each { |f| require f }
