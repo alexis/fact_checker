@@ -26,25 +26,25 @@ describe 'FactChecker' do
     describe 'instance of FactTest' do
       let(:fact_test) { FactTest.new }
 
-      specify '#facts' do
+      specify '#facts', :broken => true do
         fact_test.should respond_to :facts
         fact_test.facts.should == [:fact_test1]
       end
 
-      specify '#fact_on?' do
-        fact_test.should respond_to :fact_on?
+      specify '#fact_accomplished?' do
+        fact_test.should respond_to :fact_accomplished?
       end
 
-      specify '#fact_can?' do
-        fact_test.should respond_to :fact_can?
+      specify '#fact_possible?' do
+        fact_test.should respond_to :fact_possible?
       end
 
-      specify '#facts_on' do
-        fact_test.should respond_to :facts_on
+      specify '#accomplished_facts', :broken => true do
+        fact_test.should respond_to :accomplished_facts
       end
 
-      specify '#facts_can' do
-        fact_test.should respond_to :facts_can
+      specify '#possible_facts', :broken => true do
+        fact_test.should respond_to :possible_facts
       end
     end
   end

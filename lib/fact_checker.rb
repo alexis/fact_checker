@@ -18,9 +18,9 @@ module FactChecker
     end
   end
 
-  # TODO: Ivan P.
-  #   :facts doesn't accept arguments - probably it should be delegated as is
-  [ :fact_on?, :fact_can?, :facts_on, :facts_can ].each do |m|
-    define_method(m) { |fact| self.class.fact_checker.send(m, self, fact) }
+  def fact_accomplished?
+  end
+
+  def fact_possible?
   end
 end
