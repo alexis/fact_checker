@@ -11,9 +11,9 @@ describe 'FactChecker' do
       end
     end
 
-    specify 'FactTest has @fact_checker' do
-      FactTest.instance_variables.should include '@fact_checker'
-      FactTest.instance_eval { @fact_checker }.should be_kind_of FactChecker::Base
+    specify 'FactTest.fact_checker' do
+      FactTest.should respond_to :fact_checker
+      FactTest.fact_checker.should be_kind_of FactChecker::Base
     end
 
     specify 'FactTest.define_fact' do
@@ -23,24 +23,24 @@ describe 'FactChecker' do
     describe 'instance of FactTest' do
       let(:fact_test) { FactTest.new }
 
-      specify '#step_accomplished?' do
-        fact_test.should respond_to :step_accomplished?
+      specify '#fact_on?' do
+        fact_test.should respond_to :fact_on?
       end
 
-      specify '#step_possible?' do
-        fact_test.should respond_to :step_possible?
+      specify '#fact_can?' do
+        fact_test.should respond_to :fact_can?
       end
 
-      specify '#step' do
-        fact_test.should respond_to :steps
+      specify '#facts' do
+        fact_test.should respond_to :facts
       end
 
-      specify '#possible_steps' do
-        fact_test.should respond_to :possible_steps
+      specify '#facts_on' do
+        fact_test.should respond_to :facts_on
       end
 
-      specify '#accomplished_steps' do
-        fact_test.should respond_to :accomplished_steps
+      specify '#facts_can' do
+        fact_test.should respond_to :facts_can
       end
     end
   end
