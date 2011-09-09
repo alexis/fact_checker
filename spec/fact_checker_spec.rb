@@ -16,8 +16,8 @@ describe 'FactChecker' do
       FactTest.fact_checker.should be_kind_of FactChecker::Base
     end
 
-    specify 'FactTest.define_fact' do
-      FactTest.should respond_to :define_fact
+    specify 'FactTest.def_fact' do
+      FactTest.should respond_to :def_fact
     end
 
     describe 'instance of FactTest' do

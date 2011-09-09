@@ -42,11 +42,11 @@ class FactChecker::Base
   end
 
   # Syntactic sugar, adds fact with its requirement and dependency. Examples:
-  # - define_fact(:fact)
-  # - define_fact(:fact, :if => :requirement)
-  # - define_fact(:fact => :dependency)
-  # - define_fact(:fact => :dependency, :if => :requirement)
-  def define_fact(*opt)
+  # - def_fact(:fact)
+  # - def_fact(:fact, :if => :requirement)
+  # - def_fact(:fact => :dependency)
+  # - def_fact(:fact => :dependency, :if => :requirement)
+  def def_fact(*opt)
     raise ArgumentError, "wrong number of arguments (#{opt.size} for 2)"  if opt.size > 2
     raise ArgumentError, "wrong number of arguments (0 for 1)"            if opt.size == 0
 

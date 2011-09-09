@@ -107,53 +107,53 @@ describe FactChecker::Base do
     end
   end
 
-  describe "#define_fact" do
+  describe "#def_fact" do
     before(:each) do
       @fc = FactChecker::Base.new
     end
 
     it "should add argument to facts when called with (:fact)" do
-      @fc.define_fact(:f1)
-      @fc.define_fact(:f2)
+      @fc.def_fact(:f1)
+      @fc.def_fact(:f2)
       @fc.facts.should == [:f1, :f2]
     end
 
     it "should define fact correctly when called with (:fact, :if => :requirement)" do
-      @fc.define_fact(:f1)
-      @fc.define_fact(:f2, :if => :nil?)
+      @fc.def_fact(:f1)
+      @fc.def_fact(:f2, :if => :nil?)
       @fc.facts.should == [:f1, :f2]
       @fc.requirements[:f2].should == :nil?
     end
 
     it "should define fact correctly when called with (:fact => :dependency)" do
-      @fc.define_fact(:f1)
-      @fc.define_fact(:f2 => :f1)
+      @fc.def_fact(:f1)
+      @fc.def_fact(:f2 => :f1)
       @fc.facts.should == [:f1, :f2]
       @fc.dependencies[:f2].should == :f1
     end
 
     it "should define fact correctly when called with (:fact => :dependency, :if => :requirement)" do
-      @fc.define_fact(:f1)
-      @fc.define_fact(:f2 => :f1, :if => :nil?)
+      @fc.def_fact(:f1)
+      @fc.def_fact(:f2 => :f1, :if => :nil?)
       @fc.facts.should == [:f1, :f2]
       @fc.dependencies[:f2].should == :f1
       @fc.requirements[:f2].should == :nil?
     end
 
     it "should redefine fact if a fact with a given name already exists" do
-      @fc.define_fact(:f1 => :f2, :if => :nil?)
-      @fc.define_fact(:f1)
+      @fc.def_fact(:f1 => :f2, :if => :nil?)
+      @fc.def_fact(:f1)
       @fc.facts.should == [:f1]
       @fc.requirements[:f1].should be_nil
       @fc.dependencies[:f1].should be_nil
     end
 
     it "should raise ArgumentError exception when called with wrong arguments" do
-      lambda{ @fc.define_fact() }.should raise_error(ArgumentError)
-      lambda{ @fc.define_fact(:f1, {:if => :nil?}, true) }.should raise_error(ArgumentError)
-      lambda{ @fc.define_fact(:f1, :f2) }.should raise_error(ArgumentError)
-      lambda{ @fc.define_fact({:if => :nil?}, :f1) }.should raise_error(ArgumentError)
-      lambda{ @fc.define_fact(:f1 => :f2, :if => :nil?, :something_else => true) }.should raise_error(ArgumentError)
+      lambda{ @fc.def_fact() }.should raise_error(ArgumentError)
+      lambda{ @fc.def_fact(:f1, {:if => :nil?}, true) }.should raise_error(ArgumentError)
+      lambda{ @fc.def_fact(:f1, :f2) }.should raise_error(ArgumentError)
+      lambda{ @fc.def_fact({:if => :nil?}, :f1) }.should raise_error(ArgumentError)
+      lambda{ @fc.def_fact(:f1 => :f2, :if => :nil?, :something_else => true) }.should raise_error(ArgumentError)
     end
   end
 end

@@ -10,8 +10,8 @@ module FactChecker
   end
 
   module ClassMethods
-    def define_fact(*options)
-      fact_checker.define_fact options
+    def def_fact(*options)
+      fact_checker.def_fact options
     end
 
     def fact_checker
