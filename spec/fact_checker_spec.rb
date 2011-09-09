@@ -8,18 +8,14 @@ describe 'FactChecker' do
       class FactTest
         include FactChecker
 
-        def_fact :fact_test1
+        def_fact :fact_with_no_dependencies_no_context
+        def_fact :fact_with_true_context_no_dependencies, :if => lambda { |o| !!o.object_id }
       end
     end
 
-    specify 'FactTest.fact_checker' do
-      FactTest.should respond_to :fact_checker
-      FactTest.fact_checker.should be_kind_of FactChecker::Base
-    end
-
-    specify 'FactTest.def_fact' do
+    specify 'FactTest' do
       FactTest.should respond_to :def_fact
-      FactTest.fact_checker.facts.should == [:fact_test1]
+      FactTest.fact_checker.should be_kind_of FactChecker::Base
     end
 
     describe 'instance of FactTest' do
@@ -27,17 +23,27 @@ describe 'FactChecker' do
 
       context 'given fact with no dependencies and no context' do
         specify '#fact_accomplished? returns true' do
-          fact_test.fact_accomplished?(:fact_test1).should be_true
+          fact_test.fact_accomplished?(:fact_with_no_dependencies_no_context).should be_true
         end
 
         specify '#fact_possible? returns true' do
-          fact_test.fact_possible?(:fact_test1).should be_true
+          fact_test.fact_possible?(:fact_with_no_dependencies_no_context).should be_true
+        end
+      end
+
+      context 'given fact with true context and no dependencies' do
+        specify '#fact_accomplished? returns true' do
+          fact_test.fact_accomplished?(:fact_with_true_context_no_dependencies).should be_true
+        end
+
+        specify '#fact_possible? returns true' do
+          fact_test.fact_possible?(:fact_with_true_context_no_dependencies).should be_true
         end
       end
 
       specify '#facts' do
-        fact_test.should respond_to :facts
-        fact_test.facts.should == [:fact_test1]
+        fact_test.facts.should == [ :fact_with_no_dependencies_no_context,
+                                    :fact_with_true_context_no_dependencies ]
       end
 
       specify '#accomplished_facts' do
