@@ -11,7 +11,7 @@ module FactChecker
 
   module ClassMethods
     def def_fact(*options)
-      fact_checker.def_fact options
+      fact_checker.def_fact(*options)
     end
 
     def fact_checker
