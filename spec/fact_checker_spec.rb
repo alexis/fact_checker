@@ -18,10 +18,19 @@ describe 'FactChecker' do
 
     specify 'FactTest.def_fact' do
       FactTest.should respond_to :def_fact
+      class FactTest
+        def_fact :fact_test1
+      end
+      FactTest.fact_checker.facts.should == [[:fact_test1]]
     end
 
     describe 'instance of FactTest' do
       let(:fact_test) { FactTest.new }
+
+      specify '#facts' do
+        fact_test.should respond_to :facts
+        fact_test.facts.should == [[:fact_test1]]
+      end
 
       specify '#fact_on?' do
         fact_test.should respond_to :fact_on?
@@ -29,10 +38,6 @@ describe 'FactChecker' do
 
       specify '#fact_can?' do
         fact_test.should respond_to :fact_can?
-      end
-
-      specify '#facts' do
-        fact_test.should respond_to :facts
       end
 
       specify '#facts_on' do
