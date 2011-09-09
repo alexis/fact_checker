@@ -24,9 +24,11 @@ module FactChecker
     end
   end
 
-  def fact_accomplished?
+  def fact_accomplished?(fact)
+    self.class.fact_checker.fact_accomplished?(self, fact)
   end
 
-  def fact_possible?
+  def fact_possible?(fact)
+    self.class.fact_checker.fact_possible?(self, fact)
   end
 end
