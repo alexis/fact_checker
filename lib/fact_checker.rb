@@ -26,9 +26,9 @@ module FactChecker
   def steps
   end
 
-  def possible_steps(step)
+  def possible_steps
   end
 
-  def accomplished_steps(step)
+  def accomplished_steps
   end
 end

@@ -16,6 +16,10 @@ describe 'FactChecker' do
       FactTest.instance_eval { @fact_checker }.should be_kind_of FactChecker::Base
     end
 
+    specify 'FactTest.define_fact' do
+      FactTest.should respond_to :define_fact
+    end
+
     describe 'instance of FactTest' do
       let(:fact_test) { FactTest.new }
 
