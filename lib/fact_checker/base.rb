@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class FactChecker::Base
   attr_accessor :facts, :dependencies, :requirements
 
