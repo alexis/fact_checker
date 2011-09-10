@@ -16,6 +16,13 @@ class FactChecker::Base
     @requirements = @requirements.dup
   end
 
+  def accomplished_facts(context)
+    facts.select{ |fact| fact_accomplished?(context, fact) }
+  end
+  def possible_facts(context)
+    facts.select{ |fact| fact_possible?(context, fact) }
+  end
+
   # Checks if requirement and dependency for the fact are satisfied
   def fact_accomplished?(context, fact)
     fact_possible?(context, fact) && requirement_satisfied_for?(context, fact)

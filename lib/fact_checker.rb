@@ -1,17 +1,11 @@
 # encoding: utf-8
 
-require "forwardable"
 require "fact_checker/version"
 require "fact_checker/base"
 
 module FactChecker
   def self.included(base)
     base.extend ClassMethods
-    base.extend Forwardable
-
-    base.class_eval {
-      def_delegators :'self.class.fact_checker', :facts, :accomplished_facts, :possible_facts
-    }
   end
 
   module ClassMethods
@@ -24,11 +18,15 @@ module FactChecker
     end
   end
 
-  def fact_accomplished?(fact)
-    self.class.fact_checker.fact_accomplished?(self, fact)
+  # Delegate methods to fact_checker
+  [:fact_accomplished?, :fact_possible?, :accomplished_facts, :possible_facts].each do |name|
+    define_method(name) { |*options| fact_checker.send(name, self, *options) }
   end
+  def facts; fact_checker.facts; end
 
-  def fact_possible?(fact)
-    self.class.fact_checker.fact_possible?(self, fact)
+private 
+  
+  def fact_checker
+    self.class.fact_checker
   end
 end

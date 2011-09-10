@@ -24,6 +24,27 @@ describe FactChecker::Base do
     end
   end
 
+  describe "#facts" do
+    it "should return all facts" do
+      fc = FactChecker::Base.new([:f1, :f2])
+      fc.facts.should == [:f1, :f2]
+    end
+  end
+
+  describe "#accomplished_facts" do
+    it "should return accomplished facts" do
+      fc = FactChecker::Base.new([:f1, :f2], nil, {:f2 => lambda{ false }})
+      fc.accomplished_facts("context").should == [:f1]
+    end
+  end
+
+  describe "#possible_facts" do
+    it "should return possible facts" do
+      fc = FactChecker::Base.new([:f1, :f2], {:f1 => :f2}, {:f2 => lambda{ false }})
+      fc.possible_facts("context").should == [:f2]
+    end
+  end
+
   describe "#requirement_satisfied_for?" do
     it "should return true if no requerment defined for the step" do
       fc = FactChecker::Base.new([:f1])
