@@ -18,7 +18,6 @@ module FactChecker
     end
   end
 
-  # Delegate methods to fact_checker
   [:fact_accomplished?, :fact_possible?, :accomplished_facts, :possible_facts].each do |name|
     define_method(name) { |*options| fact_checker.send(name, self, *options) }
   end
