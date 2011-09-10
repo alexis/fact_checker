@@ -24,8 +24,8 @@ module FactChecker
   end
   def facts; fact_checker.facts; end
 
-private 
-  
+private
+
   def fact_checker
     self.class.fact_checker
   end
