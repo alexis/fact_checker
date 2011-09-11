@@ -35,7 +35,7 @@ class FactChecker::Base
 
   # Checks if requirement for the fact is satisfied (no dependency checks here)
   def requirement_satisfied_for?(context, fact)
-    return false  unless @facts.include?(fact)
+    return false unless @facts.include?(fact)
 
     req = @requirements[fact]
 
