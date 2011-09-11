@@ -135,9 +135,9 @@ describe FactChecker::Base do
       @fc = FactChecker::Base.new
     end
 
-    it "should add argument to facts when called with (:fact)" do
-      @fc.def_fact(:f1)
-      @fc.def_fact(:f2)
+    it "should add argument to facts when called with (:fact) and return (:fact)" do
+      @fc.def_fact(:f1).should be :f1
+      @fc.def_fact(:f2).should be :f2
       @fc.facts.should == [:f1, :f2]
     end
 

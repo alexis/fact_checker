@@ -51,11 +51,11 @@ class FactChecker::Base
   # - def_fact(:fact => :dependency)
   # - def_fact(:fact => :dependency, :if => :requirement)
   def def_fact(*opt)
-    raise ArgumentError, "wrong number of arguments (#{opt.size} for 2)"  if opt.size > 2
-    raise ArgumentError, "wrong number of arguments (0 for 1)"            if opt.size == 0
+    raise ArgumentError, "wrong number of arguments (#{opt.size} for 2)" if opt.size > 2
+    raise ArgumentError, "wrong number of arguments (0 for 1)"           if opt.size == 0
 
     if opt[0].is_a?(Hash)
-      raise ArgumentError, "wrong arguments (hash argument can only be the last one)"  if opt.size > 1
+      raise ArgumentError, "wrong arguments (hash argument can only be the last one)" if opt.size > 1
       hash = opt[0]
     else
       raise ArgumentError, "wrong arguments (second argument must be a hash)" if opt[1] && ! opt[1].is_a?(Hash)
@@ -66,11 +66,11 @@ class FactChecker::Base
     fact = hash.keys.first
     dep  = hash.delete(fact)
 
-    raise ArgumentError, "wrong arguments: #{hash.keys.join(', ')}"  if hash.size > 0
+    raise ArgumentError, "wrong arguments: #{hash.keys.join(', ')}" if hash.size > 0
 
-    @facts << fact  unless @facts.include?(fact)
     @requirements[fact] = req
     @dependencies[fact] = dep
+    @facts |= [fact]
+    fact
   end
-
 end

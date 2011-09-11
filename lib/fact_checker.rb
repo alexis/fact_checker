@@ -10,7 +10,13 @@ module FactChecker
 
   module ClassMethods
     def def_fact(*options)
-      fact_checker.def_fact(*options)
+      fact = fact_checker.def_fact(*options)
+
+      class_eval(<<-EOS, __FILE__, __LINE__ + 1)
+        def #{fact}?
+          fact_checker.fact_accomplished?(self, :#{fact})
+        end
+      EOS
     end
 
     def fact_checker
