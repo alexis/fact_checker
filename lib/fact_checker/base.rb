@@ -37,16 +37,11 @@ class FactChecker::Base
   def requirement_satisfied_for?(context, fact)
     return false unless @facts.include?(fact)
 
-    req = @requirements[fact]
-
-    if req.is_a?(Symbol)
-      context.send(req)
-    elsif req.is_a?(Proc)
-      req.arity < 1 ? req.call : req.call(context)
-    elsif req.nil?
-      true
-    else
-      raise RuntimeError, "can't check this fact - wrong requirement"
+    case req = @requirements[fact]
+    when Symbol   then context.send(req)
+    when Proc     then req.arity < 1 ? req.call : req.call(context)
+    when NilClass then true
+    else raise RuntimeError, "can't check this fact - wrong requirement"
     end
   end
 
