@@ -3,27 +3,26 @@
 require 'spec_helper'
 
 describe 'FactChecker' do
-  context 'included into FactTest' do
-    before :all do
-      class FactTest
-        include FactChecker
-
-        def_fact :bare_fact
-        def_fact :true_fact_with_no_dependencies, :if => lambda { true }
-        def_fact :true_fact_with_true_dependencies => :bare_fact, :if => lambda { true }
-        def_fact :true_fact_with_false_dependencies => :false_fact_with_no_dependencies, :if => lambda { true }
-        def_fact :false_fact_with_no_dependencies, :if => lambda { false }
-        def_fact :false_fact_with_true_dependencies => :bare_fact , :if => lambda { false }
-        def_fact :false_fact_with_false_dependencies => :false_fact_with_no_dependencies , :if => lambda { false }
-      end
+  context TestClassWithNoFacts do
+    specify 'its instance', :obj => TestClassWithNoFacts.new do
+      target = example.metadata[:obj]
+      target.fact_accomplished?(:unknown_fact).should be_false
+      target.fact_possible?(:unknown_fact).should be_true
+      target.facts.should       == []
+      target.possible_facts     == []
+      target.accomplished_facts == []
     end
+  end
 
-    subject { FactTest }
+  context TestClassWithFacts do
+    subject { TestClassWithFacts }
+
     it { should respond_to :def_fact }
     its(:fact_checker) { should be_kind_of FactChecker::Base }
 
     describe 'context for facts' do
-      let(:context) { FactTest.new }
+      let(:context) { TestClassWithFacts.new }
+
 
       context 'given bare fact', :fact => :bare_fact do
         it_behaves_like 'an accomplished fact', true
