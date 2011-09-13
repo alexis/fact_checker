@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email       = ["alexisowl+fact_checker@gmail.com"]
   s.homepage    = "https://github.com/alexis/fact_checker"
   s.summary     = %q{Checks facts which may depend on other facts}
-  s.description = %q{Checks facts which may depend on other facts}
+  s.description = %q{Simple gem to check hierarchically dependent "facts" about objects}
 
   s.rubyforge_project = "fact_checker"
 
