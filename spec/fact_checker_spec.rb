@@ -3,14 +3,14 @@
 require 'spec_helper'
 
 describe 'FactChecker' do
-  context TestClassWithNoFacts do
-    specify 'its instance', :obj => TestClassWithNoFacts.new do
-      target = example.metadata[:obj]
-      target.fact_accomplished?(:unknown_fact).should be_false
-      target.fact_possible?(:unknown_fact).should be_true
-      target.facts.should       == []
-      target.possible_facts     == []
-      target.accomplished_facts == []
+  describe TestClassWithNoFacts do
+    its(:facts)              { should == [] }
+    its(:possible_facts)     { should == [] }
+    its(:accomplished_facts) { should == [] }
+
+    specify '#fact_possible? and #fact_accomplished?' do
+      subject.fact_possible?(:unknown_fact).should be_true
+      subject.fact_accomplished?(:unknown_fact).should be_false
     end
   end
 
@@ -22,7 +22,6 @@ describe 'FactChecker' do
 
     describe 'context for facts' do
       let(:context) { TestClassWithFacts.new }
-
 
       context 'given bare fact', :fact => :bare_fact do
         it_behaves_like 'an accomplished fact', true
