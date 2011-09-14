@@ -9,9 +9,9 @@ module FactChecker
   end
 
   module ClassMethods
-    def def_fact(*options)
-      fact_name = fact_checker.def_fact(*options)
-      define_method(fact_name.to_s + '?') { fact_accomplished?(fact_name) }
+    def def_fact(*opts)
+      fact_name = fact_checker.def_fact(*opts)
+      define_method(fact_name.to_s << '?') { fact_accomplished?(fact_name) }
     end
 
     def fact_checker
@@ -20,9 +20,9 @@ module FactChecker
   end
 
   [:fact_accomplished?, :fact_possible?, :accomplished_facts, :possible_facts].each do |name|
-    define_method(name) { |*options| fact_checker.send(name, self, *options) }
+    define_method(name) { |*opts| fact_checker.send(name, self, *opts) }
   end
-  def facts; fact_checker.facts; end
+  def facts; fact_checker.facts end
 
 private
 
