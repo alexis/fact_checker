@@ -1,6 +1,4 @@
-# FactChecker
-
-## Examples
+# FactChecker / Examples
 
 ## How to run
 
