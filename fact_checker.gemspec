@@ -23,11 +23,8 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 1.8.7"
   s.required_rubygems_version = ">= 1.3.5"
 
-  {
-    'bundler' => '~> 1.0.18',
-    'rake'    => '~> 0.9.2',
-    'rspec'   => '~> 2.6',
-  }.each do |lib, version|
-    s.add_development_dependency lib, version
-  end
+  s.add_development_dependency 'rspec', '~> 2.6'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'bundler'
+
 end
