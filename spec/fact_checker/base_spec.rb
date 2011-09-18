@@ -105,7 +105,7 @@ describe FactChecker::Base do
       fc = FactChecker::Base.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f2 => :size, :f3 => :size, :f4 => :nil?})
       fc.fact_accomplished?("something", :f1).should be_false
     end
-    it "should return true if all requirements are satisfied and fact has no requirements" do
+    it "should return true if all dependencies are satisfied and fact has no requirements" do
       fc = FactChecker::Base.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f2 => :size, :f3 => :size, :f4 => :size})
       fc.fact_accomplished?("something", :f1).should be_true
     end
