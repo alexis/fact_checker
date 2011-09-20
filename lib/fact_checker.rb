@@ -4,8 +4,8 @@ require "fact_checker/base"
 require "fact_checker/version"
 
 module FactChecker
-  def self.included(base)
-    base.extend ClassMethods
+  def self.included(klass)
+    klass.extend ClassMethods
   end
 
   module ClassMethods
@@ -23,14 +23,9 @@ module FactChecker
     end
   end
 
+  # Delegate methods to self.class.fact_checker
   [:fact_accomplished?, :fact_possible?, :accomplished_facts, :possible_facts].each do |name|
-    define_method(name) { |*opts| fact_checker.send(name, self, *opts) }
+    define_method(name) { |*opts| self.class.fact_checker.send(name, self, *opts) }
   end
-  def facts; fact_checker.facts end
-
-private
-
-  def fact_checker
-    self.class.fact_checker
-  end
+  def facts; self.class.fact_checker.facts; end
 end
