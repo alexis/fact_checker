@@ -6,12 +6,11 @@ require "fact_checker/version"
 module FactChecker
   def self.included(base)
     base.extend ClassMethods
-    base.instance_variable_set('@fact_checker', FactChecker::Base.new)
   end
 
   module ClassMethods
     def inherited(child)
-      child.instance_variable_set('@fact_checker', @fact_checker.dup)
+      child.instance_variable_set('@fact_checker', fact_checker.dup)
     end
 
     def def_fact(*opts)
