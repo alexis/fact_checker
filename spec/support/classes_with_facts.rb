@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-class TestClassWithNoFacts
+class ClassWithNoFacts
   include FactChecker
 end
 
-class TestClassWithFacts
+class ClassWithFacts
   include FactChecker
 
   def_fact :bare_fact
@@ -16,4 +16,7 @@ class TestClassWithFacts
   def_fact :false_fact_with_no_dependencies, :if => lambda { false }
   def_fact :false_fact_with_true_dependencies => :bare_fact , :if => lambda { false }
   def_fact :false_fact_with_false_dependencies => :false_fact_with_no_dependencies , :if => lambda { false }
+end
+
+class ChildOfClassWithFacts < ClassWithFacts
 end
