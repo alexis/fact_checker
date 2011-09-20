@@ -20,3 +20,8 @@ end
 
 class ChildOfClassWithFacts < ClassWithFacts
 end
+
+# :another_fact should not creep back to parent classes
+class GrandChildOfClassWithFacts < ChildOfClassWithFacts
+  def_fact :another_fact
+end

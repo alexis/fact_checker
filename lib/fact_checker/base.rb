@@ -9,11 +9,11 @@ class FactChecker::Base
     @requirements = reqs  || {}
   end
 
-  def initialize_copy
+  def initialize_copy(orig)
     super
-    @facts = @facts.dup
-    @dependencies = @dependencies.dup
-    @requirements = @requirements.dup
+    @facts = orig.facts.dup
+    @dependencies = orig.dependencies.dup
+    @requirements = orig.requirements.dup
   end
 
   def accomplished_facts(context)
