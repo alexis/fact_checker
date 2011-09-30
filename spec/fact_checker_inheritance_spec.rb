@@ -10,7 +10,7 @@ describe 'FactCheckerInheritance' do
     its(:fact_checker) { should be_kind_of FactChecker::Base }
 
     describe 'context for inherited facts' do
-      let(:context) { ChildOfClassWithFacts.new }
+      let(:target) { ChildOfClassWithFacts.new }
 
       context 'inherited bare fact', :fact => :bare_fact do
         it_behaves_like 'an accomplished fact', true
@@ -48,15 +48,15 @@ describe 'FactCheckerInheritance' do
       end
 
       specify '#facts' do
-        context.facts.size.should == 7
+        target.facts.size.should == 7
       end
 
       specify '#accomplished_facts' do
-        context.accomplished_facts.should == [ :bare_fact, :true_fact_with_no_dependencies, :true_fact_with_true_dependencies ]
+        target.accomplished_facts.should == [ :bare_fact, :true_fact_with_no_dependencies, :true_fact_with_true_dependencies ]
       end
 
       specify '#possible_facts' do
-        context.possible_facts.should == context.facts - [ :true_fact_with_false_dependencies, :false_fact_with_false_dependencies ]
+        target.possible_facts.should == target.facts - [ :true_fact_with_false_dependencies, :false_fact_with_false_dependencies ]
       end
     end
   end
