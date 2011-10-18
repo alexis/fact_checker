@@ -2,8 +2,6 @@
 
 require 'spec_helper'
 
-describe 'FactChecker::VERSION' do
-  subject { FactChecker::VERSION }
-
+describe FactChecker::VERSION do
   it { should =~ /\A\d+\.\d+\.\d+\z/ }
 end
