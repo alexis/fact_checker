@@ -1,8 +1,9 @@
 # encoding: utf-8
 
-module FactChecker
-  autoload :Base, 'fact_checker/base'
+require "fact_checker/base"
+require "fact_checker/version"
 
+module FactChecker
   def self.included(klass)
     klass.extend ClassMethods
   end
@@ -28,5 +29,3 @@ module FactChecker
   end
   def facts; self.class.fact_checker.facts; end
 end
-
-require 'fact_checker/version'
