@@ -5,6 +5,7 @@ require 'fact_checker'
 Dir['./spec/support/**/*.rb'].each { |f| require f }
 
 RSpec.configure do |conf|
+  conf.formatter = :documentation
   conf.color_enabled = true
   conf.treat_symbols_as_metadata_keys_with_true_values = true
 
