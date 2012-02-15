@@ -12,10 +12,10 @@
 class Person
   include FactChecker
 
-  def_fact :good_job,      :if => lambda { |p| p.job.good? }
-  def_fact :good_family,   :if => lambda { |p| p.family.good? }
-  def_fact :is_healthy,    :if => lambda { |p| p.health.good? }
-  def_fact :is_happy => [:is_healthy, :good_family, :good_job],  :if => lambda { |p| ! p.too_clever? }
+  def_fact :good_job,    if: ->(p) { p.job.good? }
+  def_fact :good_family, if: ->(p) { p.family.good? }
+  def_fact :is_healthy,  if: ->(p) { p.health.good? }
+  def_fact :is_happy => [:is_healthy, :good_family, :good_job],  if: ->(p) { ! p.too_clever? }
 
   ...
 end
