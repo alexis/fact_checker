@@ -20,6 +20,7 @@ module FactChecker
     def accomplished_facts(context)
       facts.select{ |fact| fact_accomplished?(context, fact) }
     end
+
     def possible_facts(context)
       facts.select{ |fact| fact_possible?(context, fact) }
     end
