@@ -14,7 +14,7 @@ end
 
 target = BasicExample.new
 
-def target.my_requirement?; false end
+def target.my_requirement?; false; end
 
 p target.fact_possible?     :be
 # => true
