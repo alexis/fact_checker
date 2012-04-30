@@ -2,8 +2,10 @@
 
 require 'spec_helper'
 
-describe 'FactChecker' do
+describe FactChecker do
   describe ClassWithNoFacts do
+    subject { ClassWithNoFacts.new }
+
     its(:facts)              { should == [] }
     its(:possible_facts)     { should == [] }
     its(:accomplished_facts) { should == [] }
