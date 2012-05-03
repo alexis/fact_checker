@@ -16,6 +16,8 @@ class ClassWithFacts
   def_fact :false_fact_with_no_dependencies, :if => lambda { false }
   def_fact :false_fact_with_true_dependencies => :bare_fact , :if => lambda { false }
   def_fact :false_fact_with_false_dependencies => :false_fact_with_no_dependencies , :if => lambda { false }
+
+  def_fact :_private_fact
 end
 
 class ChildOfClassWithFacts < ClassWithFacts
