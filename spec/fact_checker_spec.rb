@@ -25,47 +25,58 @@ describe FactChecker do
     describe 'context for facts' do
       let(:target) { ClassWithFacts.new }
 
-      context 'given bare fact', :fact => :bare_fact do
+      context 'given private fact', fact: :_private_fact do
+        specify 'private fact included in #facts' do
+          target.facts.should include example.metadata[:fact]
+        end
+
+        specify 'private fact does not have a predicate method' do
+          target.methods(true).should_not include example.metadata[:fact]
+          -> { target.send(example.metadata[:fact].to_s + '?') }.should raise_error NoMethodError
+        end
+      end
+
+      context 'given bare fact', fact: :bare_fact do
         it_behaves_like 'an accomplished fact', true
         it_behaves_like 'a possible fact',      true
       end
 
-      context 'given true fact with no dependencies', :fact => :true_fact_with_no_dependencies  do
+      context 'given true fact with no dependencies', fact: :true_fact_with_no_dependencies  do
         it_behaves_like 'an accomplished fact', true
         it_behaves_like 'a possible fact',      true
       end
 
-      context 'given true fact with true dependencies', :fact => :true_fact_with_true_dependencies do
+      context 'given true fact with true dependencies', fact: :true_fact_with_true_dependencies do
         it_behaves_like 'an accomplished fact', true
         it_behaves_like 'a possible fact',      true
       end
 
-      context 'given true fact with false dependencies', :fact => :true_fact_with_false_dependencies do
+      context 'given true fact with false dependencies', fact: :true_fact_with_false_dependencies do
         it_behaves_like 'an accomplished fact', false
         it_behaves_like 'a possible fact',      false
       end
 
-      context 'given false fact with no dependencies', :fact => :false_fact_with_no_dependencies do
+      context 'given false fact with no dependencies', fact: :false_fact_with_no_dependencies do
         it_behaves_like 'an accomplished fact', false
         it_behaves_like 'a possible fact',      true
       end
 
-      context 'given false fact with true dependencies', :fact => :false_fact_with_true_dependencies do
+      context 'given false fact with true dependencies', fact: :false_fact_with_true_dependencies do
         it_behaves_like 'an accomplished fact', false
         it_behaves_like 'a possible fact',      true
       end
 
-      context 'given false fact with false dependencies', :fact => :false_fact_with_false_dependencies do
+      context 'given false fact with false dependencies', fact: :false_fact_with_false_dependencies do
         it_behaves_like 'an accomplished fact', false
         it_behaves_like 'a possible fact',      false
       end
 
       specify '#facts' do
-        target.facts.size.should == 7
+        target.facts.size.should be 8
       end
 
       specify '#accomplished_facts' do
-        target.accomplished_facts.should == [ :bare_fact, :true_fact_with_no_dependencies, :true_fact_with_true_dependencies ]
+        target.accomplished_facts.should == [ :bare_fact, :true_fact_with_no_dependencies, :true_fact_with_true_dependencies, :_private_fact ]
       end
 
       specify '#possible_facts' do
