@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'delegate'
+
 module FactChecker
   class Base
     attr_accessor :facts, :dependencies, :requirements
@@ -27,16 +29,19 @@ module FactChecker
 
     # Checks if requirement and dependency for the fact are satisfied
     def fact_accomplished?(context, fact)
+      fact = ensure_symbol fact
       fact_possible?(context, fact) && requirement_satisfied_for?(context, fact)
     end
 
     # Checks if dependency for the fact is satisfied
     def fact_possible?(context, fact)
+      fact = ensure_symbol fact
       [* @dependencies[fact] || []].all?{ |dep| fact_accomplished?(context, dep) }
     end
 
     # Checks if requirement for the fact is satisfied (no dependency checks here)
     def requirement_satisfied_for?(context, fact)
+      fact = ensure_symbol fact
       return false unless @facts.include?(fact)
 
       case req = @requirements[fact]
@@ -65,15 +70,32 @@ module FactChecker
       end
 
       req  = hash.delete(:if)
-      fact = hash.keys.first
-      dep  = hash.delete(fact)
+      fact = ensure_symbol hash.keys.first
+      dep  = hash.delete(hash.keys.first)
 
       raise ArgumentError, "wrong arguments: #{hash.keys.join(', ')}" if hash.size > 0
 
       @requirements[fact] = req
       @dependencies[fact] = dep
       @facts |= [fact]
-      fact
+
+      fact_functor_obj fact
     end
+
+    private
+
+      def ensure_symbol(fact_name)
+        unless [Symbol, String].include? fact_name.class
+          fail ArgumentError, 'fact_name is not of class Symbol or String'
+        end
+
+        fact_name.to_sym
+      end
+
+      def fact_functor_obj(fact_name)
+        fact_obj = SimpleDelegator.new(fact_name.to_s)
+        def fact_obj.is_private?; start_with? '_'; end
+        fact_obj
+      end
   end
 end
