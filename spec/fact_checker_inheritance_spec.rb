@@ -52,11 +52,11 @@ describe 'FactCheckerInheritance' do
       end
 
       specify '#accomplished_facts' do
-        target.accomplished_facts.should == [ :bare_fact, :true_fact_with_no_dependencies, :true_fact_with_true_dependencies, :_private_fact ]
+        target.accomplished_facts.should == [:bare_fact, :true_fact_with_no_dependencies, :true_fact_with_true_dependencies, :_private_fact]
       end
 
       specify '#possible_facts' do
-        target.possible_facts.should == target.facts - [ :true_fact_with_false_dependencies, :false_fact_with_false_dependencies ]
+        target.possible_facts.should == target.facts - [:true_fact_with_false_dependencies, :false_fact_with_false_dependencies]
       end
     end
   end

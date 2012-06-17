@@ -76,12 +76,32 @@ describe FactChecker do
       end
 
       specify '#accomplished_facts' do
-        target.accomplished_facts.should == [ :bare_fact, :true_fact_with_no_dependencies, :true_fact_with_true_dependencies, :_private_fact ]
+        target.accomplished_facts.should == [:bare_fact, :true_fact_with_no_dependencies, :true_fact_with_true_dependencies, :_private_fact]
       end
 
       specify '#possible_facts' do
-        target.possible_facts.should == target.facts - [ :true_fact_with_false_dependencies, :false_fact_with_false_dependencies ]
+        target.possible_facts.should == target.facts - [:true_fact_with_false_dependencies, :false_fact_with_false_dependencies]
       end
+
+      specify 'symbolic and string facts are the same thing' do
+        target.class.class_eval { def_fact :symbolic_fact, if: -> { false } }
+        target.symbolic_fact?.should be false
+        target.fact_accomplished?(:symbolic_fact).should be false
+        target.fact_accomplished?('symbolic_fact').should be false
+        target.fact_possible?(:symbolic_fact).should be true
+        target.fact_possible?('symbolic_fact').should be true
+
+        target.class.class_eval { def_fact 'symbolic_fact', if: -> { true } }
+        target.symbolic_fact?.should be true
+        target.fact_accomplished?(:symbolic_fact).should be true
+        target.fact_accomplished?('symbolic_fact').should be true
+        target.fact_possible?(:symbolic_fact).should be true
+        target.fact_possible?('symbolic_fact').should be true
+
+        target.facts.count(:symbolic_fact).should be 1
+        target.facts.size.should be 9
+      end
+
     end
   end
 end

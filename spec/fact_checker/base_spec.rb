@@ -154,7 +154,7 @@ describe FactChecker::Base do
       end
 
       it "returns :fact_name" do
-        subject.def_fact(:f1).should be :f1
+        subject.def_fact(:f1).should == 'f1'
       end
     end
 
