@@ -11,11 +11,8 @@ module FactChecker
     end
 
     def def_fact(*opts)
-      symbolic_fact_name = fact_checker.def_fact(*opts)
-      fact_name = symbolic_fact_name.to_s + '?'
-      unless fact_name.start_with? '_'
-        define_method(fact_name) { fact_accomplished?(symbolic_fact_name) }
-      end
+      fact = fact_checker.def_fact(*opts)
+      define_method(fact + '?') { fact_accomplished?(fact.to_s) } unless fact.is_private?
     end
 
     def fact_checker
