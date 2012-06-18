@@ -20,12 +20,12 @@ class Person
   ...
 end
 
-p = Person.new(:job => good_job, :family => good_family, :health => :good, :intellect => :too_clever)
-p.good_job?                 # => true
-p.good_family?              # => true
-p.is_healthy?               # => true
-p.fact_possible?(:is_happy) # => true (dependency satisfied)
-p.is_happy?                 # => false
+p = Person.new(job: good_job, family: good_family, health: :good, intellect: :too_clever)
+p.fact_accomplished?(:good_job) # => true
+p.good_family?                  # => true
+p.is_healthy?                   # => true
+p.fact_possible?(:is_happy)     # => true (dependency satisfied)
+p.is_happy?                     # => false
 
 p.possible_facts - p.accomplished_facts # => [:happy]
 ```
