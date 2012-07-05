@@ -12,9 +12,11 @@
 class Person
   include FactChecker
 
+  def_fact :rich,        if: :big_paycheck
   def_fact :good_job,    if: ->(p) { p.job.good? }
   def_fact :good_family, if: ->(p) { p.family.good? }
-  def_fact :is_healthy,  if: ->(p) { p.health.good? }
+  # or
+  def_fact :is_healthy,  if: -> { health.good? }
   def_fact :is_happy => [:is_healthy, :good_family, :good_job],  if: ->(p) { ! p.too_clever? }
 
   ...

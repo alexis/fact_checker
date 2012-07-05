@@ -45,8 +45,8 @@ module FactChecker
       return false unless @facts.include?(fact)
 
       case req = @requirements[fact]
-      when Symbol   then context.send(req)
-      when Proc     then req.arity < 1 ? req.call : req.call(context)
+      when Symbol   then context.public_send(req)
+      when Proc     then req.arity < 1 ? context.instance_exec(&req) : req.call(context)
       when NilClass then true
       else raise RuntimeError, "can't check this fact - wrong requirement"
       end
