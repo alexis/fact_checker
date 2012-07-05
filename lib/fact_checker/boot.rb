@@ -22,7 +22,7 @@ module FactChecker
 
   # Delegate methods to self.class.fact_checker
   [:fact_accomplished?, :fact_possible?, :accomplished_facts, :possible_facts].each do |name|
-    define_method(name) { |*opts| self.class.fact_checker.send(name, self, *opts) }
+    define_method(name) { |*opts| self.class.fact_checker.public_send(name, self, *opts) }
   end
   def facts; self.class.fact_checker.facts; end
 end
