@@ -81,22 +81,26 @@ describe FactChecker do
       end
 
       specify 'symbolic and string facts are the same thing' do
-        target.class.class_eval { def_fact :symbolic_fact, if: -> { false } }
-        target.symbolic_fact?.should be false
-        target.fact_accomplished?(:symbolic_fact).should be false
-        target.fact_accomplished?('symbolic_fact').should be false
-        target.fact_possible?(:symbolic_fact).should be true
-        target.fact_possible?('symbolic_fact').should be true
+        klass = Class.new {
+          include FactChecker
+          def_fact :symbolic_fact, if: -> { false }
+        }
+        instance = klass.new
+        instance.symbolic_fact?.should be false
+        instance.fact_accomplished?(:symbolic_fact).should be false
+        instance.fact_accomplished?('symbolic_fact').should be false
+        instance.fact_possible?(:symbolic_fact).should be true
+        instance.fact_possible?('symbolic_fact').should be true
 
-        target.class.class_eval { def_fact 'symbolic_fact', if: -> { true } }
-        target.symbolic_fact?.should be true
-        target.fact_accomplished?(:symbolic_fact).should be true
-        target.fact_accomplished?('symbolic_fact').should be true
-        target.fact_possible?(:symbolic_fact).should be true
-        target.fact_possible?('symbolic_fact').should be true
+        instance.class.class_eval { def_fact 'symbolic_fact', if: -> { true } }
+        instance.symbolic_fact?.should be true
+        instance.fact_accomplished?(:symbolic_fact).should be true
+        instance.fact_accomplished?('symbolic_fact').should be true
+        instance.fact_possible?(:symbolic_fact).should be true
+        instance.fact_possible?('symbolic_fact').should be true
 
-        target.facts.count(:symbolic_fact).should be 1
-        target.facts.size.should be 9
+        instance.facts.count(:symbolic_fact).should be 1
+        instance.facts.size.should be 1
       end
 
     end
