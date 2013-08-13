@@ -44,6 +44,7 @@ module FactChecker
       fact = ensure_symbol fact
       return false unless @facts.include?(fact)
 
+      # TODO should check respond_to?(:call), not is_a(Proc)
       case req = @requirements[fact]
       when Symbol   then context.send(req)
       when Proc     then req.arity < 1 ? req.call : req.call(context)
@@ -54,22 +55,17 @@ module FactChecker
 
     # Syntactic sugar, adds fact with its requirement and dependency. Examples:
     # - def_fact(:fact)
-    # - def_fact(:fact, :if => :requirement)
+    # - def_fact(:fact) {...}
     # - def_fact(:fact => :dependency)
-    # - def_fact(:fact => :dependency, :if => :requirement)
-    def def_fact(*opt)
-      raise ArgumentError, "wrong number of arguments (#{opt.size} for 2)" if opt.size > 2
-      raise ArgumentError, "wrong number of arguments (0 for 1)"           if opt.size == 0
-
-      if opt[0].is_a?(Hash)
-        raise ArgumentError, "wrong arguments (hash argument can only be the last one)" if opt.size > 1
-        hash = opt[0]
+    # - def_fact(:fact => :dependency) {...}
+    def def_fact(opt, &block)
+      if opt.is_a?(Hash)
+        hash = opt
       else
-        raise ArgumentError, "wrong arguments (second argument must be a hash)" if opt[1] && ! opt[1].is_a?(Hash)
-        hash = (opt[1] || {}).merge(opt[0] => nil)
+        hash = {opt => nil}
       end
 
-      req  = hash.delete(:if)
+      req  = block
       fact = ensure_symbol hash.keys.first
       dep  = hash.delete(hash.keys.first)
 

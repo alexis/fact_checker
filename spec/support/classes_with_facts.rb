@@ -9,15 +9,15 @@ end
 class ClassWithFacts
   include FactChecker
 
-  def_fact :bare_fact
-  def_fact :true_fact_with_no_dependencies, :if => lambda { true }
-  def_fact 'true_fact_with_true_dependencies' => :bare_fact, :if => lambda { true }
-  def_fact :true_fact_with_false_dependencies => :false_fact_with_no_dependencies, :if => lambda { true }
-  def_fact :false_fact_with_no_dependencies, :if => lambda { false }
-  def_fact 'false_fact_with_true_dependencies' => :bare_fact , :if => lambda { false }
-  def_fact :false_fact_with_false_dependencies => :false_fact_with_no_dependencies , :if => lambda { false }
+  def_fact(:bare_fact)
+  def_fact(:true_fact_with_no_dependencies) { true }
+  def_fact('true_fact_with_true_dependencies' => :bare_fact) { true }
+  def_fact(:true_fact_with_false_dependencies => :false_fact_with_no_dependencies) { true }
+  def_fact(:false_fact_with_no_dependencies) { false }
+  def_fact('false_fact_with_true_dependencies' => :bare_fact) { false }
+  def_fact(:false_fact_with_false_dependencies => :false_fact_with_no_dependencies) { false }
 
-  def_fact :_private_fact
+  def_fact(:_private_fact)
 end
 
 class ChildOfClassWithFacts < ClassWithFacts

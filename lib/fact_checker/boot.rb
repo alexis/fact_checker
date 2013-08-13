@@ -10,8 +10,8 @@ module FactChecker
       child.instance_variable_set('@fact_checker', fact_checker.dup)
     end
 
-    def def_fact(*opts)
-      fact = fact_checker.def_fact(*opts)
+    def def_fact(*opts, &block)
+      fact = fact_checker.def_fact(*opts, &block)
       define_method(fact + '?') { fact_accomplished?(fact.to_s) } unless fact.is_private?
     end
 

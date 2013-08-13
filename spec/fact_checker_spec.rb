@@ -22,7 +22,7 @@ describe FactChecker do
     it { should respond_to :def_fact }
     its(:fact_checker) { should be_kind_of FactChecker::Base }
 
-    describe 'context for facts' do
+    context 'instance methods' do
       let(:target) { ClassWithFacts.new }
 
       context 'given private fact', fact: :_private_fact do
@@ -84,14 +84,14 @@ describe FactChecker do
       end
 
       specify 'symbolic and string facts are the same thing' do
-        target.class.class_eval { def_fact :symbolic_fact, if: -> { false } }
+        target.class.class_eval { def_fact(:symbolic_fact) { false } }
         target.symbolic_fact?.should be false
         target.fact_accomplished?(:symbolic_fact).should be false
         target.fact_accomplished?('symbolic_fact').should be false
         target.fact_possible?(:symbolic_fact).should be true
         target.fact_possible?('symbolic_fact').should be true
 
-        target.class.class_eval { def_fact 'symbolic_fact', if: -> { true } }
+        target.class.class_eval { def_fact('symbolic_fact') { true } }
         target.symbolic_fact?.should be true
         target.fact_accomplished?(:symbolic_fact).should be true
         target.fact_accomplished?('symbolic_fact').should be true

@@ -110,15 +110,15 @@ describe FactChecker::Base do
           )
         }
 
-        it "returns true if fact has no requirements" do
+        it "returns true if fact has no requirement" do
           subject.fact_accomplished?("something", :f4).should be_true
         end
 
-        it "returns false if requirements not satisfied" do
+        it "returns false if requirement not satisfied" do
           subject.fact_accomplished?("somet", :f1).should be_false
         end
 
-        it "returns true if all requirements are satisfied" do
+        it "returns true if all requirement are satisfied" do
           subject.fact_accomplished?("some", :f1).should be_true
         end
       end
@@ -158,16 +158,16 @@ describe FactChecker::Base do
       end
     end
 
-    context "called with (:fact_name, :if => :requirement)" do
+    context "called with (:fact_name) {...}" do
       it "adds :fact_name to facts" do
         subject.def_fact(:f1)
-        subject.def_fact(:f2, :if => :nil?)
+        subject.def_fact(:f2) {}
         subject.facts.should == [:f1, :f2]
       end
 
-      it "adds :requirement to requirements" do
-        subject.def_fact(:f2, :if => :nil?)
-        subject.requirements[:f2].should == :nil?
+      it "adds block to requirements" do
+        subject.def_fact(:f2) { 'foo' }
+        subject.requirements[:f2].call.should == 'foo'
       end
     end
 
@@ -184,11 +184,11 @@ describe FactChecker::Base do
       end
     end
 
-    context "called with (:fact_name => :dependency, :if => :requirement)" do
+    context "called with (:fact_name => :dependency) {...}" do
       subject do
         FactChecker::Base.new.tap do |checker|
           checker.def_fact(:f1)
-          checker.def_fact(:f2 => :f1, :if => :to_i)
+          checker.def_fact(:f2 => :f1) { 'bar' }
         end
       end
 
@@ -197,7 +197,7 @@ describe FactChecker::Base do
       end
 
       it "adds :requirement to requirements" do
-        subject.requirements[:f2].should == :to_i
+        subject.requirements[:f2].call.should == 'bar'
       end
 
       it "adds :dependency to dependencies" do
@@ -208,7 +208,7 @@ describe FactChecker::Base do
     context "called again for the same fact_name" do
       subject do
         FactChecker::Base.new.tap do |checker|
-          checker.def_fact(:f1 => :f2, :if => :nil?)
+          checker.def_fact(:f1 => :f2) {}
           checker.def_fact(:f1)
         end
       end
@@ -227,24 +227,16 @@ describe FactChecker::Base do
     end
 
     context "called with wrong arguments it RAISES ERROR, for example" do
-      specify "#def_fact() raises error" do
+      specify "#def_fact()" do
         expect { subject.def_fact() }.to raise_error ArgumentError
       end
 
-      specify "#def_fact(:fact_name, {:if => :requirement}, something_else) raises error" do
-        expect { subject.def_fact(:f1, {:if => :nil?}, 1) }.to raise_error ArgumentError
+      specify "#def_fact(:fact_name, {:if => :requirement})" do
+        expect { subject.def_fact(:f1, :if => lambda{}) }.to raise_error ArgumentError
       end
 
-      specify "#def_fact(:fact_name, some_scalar_value) raises error" do
-        expect { subject.def_fact(:f1, 1)}.to raise_error ArgumentError
-      end
-
-      specify "#def_fact({:if => :requirement}, something_else) raises error" do
-        expect { subject.def_fact({:if => :nil?}, :f1) }.to raise_error ArgumentError
-      end
-
-      specify "#def_fact(:fact_name => :dependency, :if => :requirement, :some_other_key => something_else) raises error" do
-        expect { subject.def_fact(:f1 => :f2, :if => :nil?, :something_else => true) }.to raise_error ArgumentError
+      specify "#def_fact(:fact_name, something_else)" do
+        expect { subject.def_fact(:f1, 1) }.to raise_error ArgumentError
       end
     end
   end
