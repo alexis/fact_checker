@@ -2,8 +2,6 @@
 
   Simple ruby gem to check hierarchically dependent "facts" about objects.
 
-  [![Build Status](https://secure.travis-ci.org/alexis/fact_checker.png?branch=master)](http://travis-ci.org/alexis/fact_checker)
-
 ## Synopsys
 
 ``` ruby
@@ -34,12 +32,13 @@ The gem is most usefull when you have something
 like a checklist, a list of tasks that your users should complete to achieve some goal. 
 
 For example, let''s say that in order to publish an article, user have to:
-1) write the article
-2) name the article (user may complete steps 1 & 2 in any order)
-3) choose its category
-4) assign tags to the article (user may complete steps 3 & 4 in any order, but only after steps 1 & 2)
-5) mark article as ready for review (only after steps 1-3 are completed, but step 4 is not required)
-6) recieve approvement from one of moderators (all steps 1-5 are required)
+
+1. write the article
+2. name the article (user may complete steps 1 & 2 in any order)
+3. choose its category
+4. assign tags to the article (user may complete steps 3 & 4 in any order, but only after steps 1 & 2)
+5. mark article as ready for review (only after steps 1-3 are completed, but step 4 is not required)
+6. recieve approvement from one of moderators (all steps 1-5 are required)
 
 <!--- The imporant thing here - which makes fact_checker worth its use - is that you want to display this 
 checklist for users in a way that they could instantly understand which steps are completed, which
