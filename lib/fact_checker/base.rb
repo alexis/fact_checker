@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require 'delegate'
-
 module FactChecker
   class Base
     attr_accessor :facts, :dependencies, :requirements
@@ -75,7 +73,7 @@ module FactChecker
       @dependencies[fact] = dep
       @facts |= [fact]
 
-      fact_functor_obj fact
+      fact
     end
 
     private
@@ -86,12 +84,6 @@ module FactChecker
         end
 
         fact_name.to_sym
-      end
-
-      def fact_functor_obj(fact_name)
-        fact_obj = SimpleDelegator.new(fact_name.to_s)
-        def fact_obj.is_private?; start_with? '_'; end
-        fact_obj
       end
   end
 end
