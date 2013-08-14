@@ -26,6 +26,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rspec',     '~> 2.10.0'
-  s.add_development_dependency 'debugger',  '~> 1.1.4'
   s.add_development_dependency 'simplecov', '~> 0.6.4'
+  s.add_development_dependency 'debugger'
 end
