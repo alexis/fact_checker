@@ -27,22 +27,21 @@ module FactChecker
 
     # Checks if requirement and dependency for the fact are satisfied
     def fact_accomplished?(context, fact)
-      fact = ensure_symbol fact
+      fact = ensure_symbol(fact)
       fact_possible?(context, fact) && requirement_satisfied_for?(context, fact)
     end
 
     # Checks if dependency for the fact is satisfied
     def fact_possible?(context, fact)
-      fact = ensure_symbol fact
+      fact = ensure_symbol(fact)
       [* @dependencies[fact] || []].all?{ |dep| fact_accomplished?(context, dep) }
     end
 
     # Checks if requirement for the fact is satisfied (no dependency checks here)
     def requirement_satisfied_for?(context, fact)
-      fact = ensure_symbol fact
+      fact = ensure_symbol(fact)
       return false unless @facts.include?(fact)
 
-      # TODO should check respond_to?(:call), not is_a(Proc)
       case req = @requirements[fact]
       when Proc     then req.arity < 1 ? req.call : req.call(context)
       when NilClass then true
@@ -56,14 +55,10 @@ module FactChecker
     # - def_fact(:fact => :dependency)
     # - def_fact(:fact => :dependency) {...}
     def def_fact(opt, &block)
-      if opt.is_a?(Hash)
-        hash = opt
-      else
-        hash = {opt => nil}
-      end
+      hash = opt.is_a?(Hash) ? opt : {opt => nil}
 
       req  = block
-      fact = ensure_symbol hash.keys.first
+      fact = ensure_symbol(hash.keys.first)
       dep  = hash.delete(hash.keys.first)
 
       raise ArgumentError, "wrong arguments: #{hash.keys.join(', ')}" if hash.size > 0
@@ -77,12 +72,9 @@ module FactChecker
 
     private
 
-      def ensure_symbol(fact_name)
-        unless [Symbol, String].include? fact_name.class
-          fail ArgumentError, 'fact_name is not of class Symbol or String'
-        end
-
-        fact_name.to_sym
-      end
+    def ensure_symbol(fact_name)
+      raise ArgumentError, "fact_name can't be converted to symbol"  unless fact_name.respond_to?(:to_sym)
+      fact_name.to_sym
+    end
   end
 end
