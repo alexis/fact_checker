@@ -31,7 +31,7 @@ p.possible_facts - p.accomplished_facts # => [:happy]
 The gem is most usefull when you have something
 like a checklist, a list of tasks that your users should complete to achieve some goal. 
 
-For example, let''s say that in order to publish an article, user have to:
+For example, let's say that in order to publish an article, user have to:
 
 1. write the article
 2. name the article (user may complete steps 1 & 2 in any order)
@@ -51,14 +51,12 @@ Using fact_checker that could be implemented like this:
 ```ruby
 include FactChecker
 
-define_fact_checker :add_delegations => true do
-  fact(:step1)                     { content.present? }
-  fact(:step2)                     { name.present? }
-  fact(:step3 => [:step1, :step2]) { category.present? }
-  fact(:step4 => [:step1, :step2]) { tag_list.present? }
-  fact(:step5 => :step3)           { ready_for_approvement? }
-  fact(:step6 => [:step4, :step5]) { approved? }
-end
+def_fact(:step1)                     { content.present? }
+def_fact(:step2)                     { name.present? }
+def_fact(:step3 => [:step1, :step2]) { category.present? }
+def_fact(:step4 => [:step1, :step2]) { tag_list.present? }
+def_fact(:step5 => :step3)           { ready_for_approvement? }
+def_fact(:step6 => [:step4, :step5]) { approved? }
 
 def state_of(step)
   return 'completed'         if fact_accomplished?(step) 
