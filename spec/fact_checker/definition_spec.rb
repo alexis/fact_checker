@@ -2,18 +2,18 @@
 
 require 'spec_helper'
 
-describe FactChecker::Base2 do
+describe FactChecker::Definition do
 
-  let(:true_block)     { proc{ !!object_id } }
-  let(:false_block)    { proc{ nil? } }
-  let(:validity_block) { proc{ valid? } }
+  let(:nil_block)  { proc{ |o| o.nil? } }
+  let(:to_i_block) { proc{ |o| o.to_i } }
+  let(:size_block) { proc{ |o| o.size } }
 
   describe "#initialize" do
     context "called with all arguments (fact_list, dependencies_hash, requirements_hash), its " do
-      subject { FactChecker::Base2.new([:f1, :f2], {:f1 => :f2}, {:f1 => false_block}) }
+      subject { FactChecker::Definition.new([:f1, :f2], {:f1 => :f2}, {:f1 => nil_block}) }
       specify("facts == fact_list") { subject.facts.should == [:f1, :f2] }
       specify("dependencies == dependencies_hash") { subject.dependencies.should == {:f1 => :f2} }
-      specify("requirements == requirements_hash") { subject.requirements.should == {:f1 => false_block} }
+      specify("requirements == requirements_hash") { subject.requirements.should == {:f1 => nil_block} }
     end
 
     context "called" do
@@ -23,95 +23,94 @@ describe FactChecker::Base2 do
     end
   end
 
-  describe "#requirement_satisfied_for?(fact)" do
-    subject { FactChecker::Base2.new([:f1]) }
-
+  describe "#requirement_satisfied_for?(context, fact)" do
     context "when no requirement defined for the fact" do
-      it "returns true" do
-        subject.requirement_satisfied_for?(:f1).should be_true
+      subject { FactChecker::Definition.new([:f1]) }
+      it "returns true for any object" do
+        subject.requirement_satisfied_for?(1, :f1).should be_true
+        subject.requirement_satisfied_for?(nil, :f1).should be_true
       end
     end
 
-    context "when requirement defined as Proc" do
-      it "returns false if requirement evaluates to false" do
-        subject.requirements[:f1] = false_block
-        subject.requirement_satisfied_for?(:f1).should be_false
+    context "when requirement was defined as Proc with arity == 1" do
+      subject { FactChecker::Definition.new([:f1], nil, {:f1 => lambda{|t| t.nil?}}) }
+      it "returns false if proc(context) == false" do
+        subject.requirement_satisfied_for?(1, :f1).should be_false
       end
+      it "returns true if proc(context) == true" do
+        subject.requirement_satisfied_for?(nil, :f1).should be_true
+      end
+    end
 
-      it "returns false if requirement evaluates to true" do
-        subject.requirements[:f1] = true_block
-        subject.requirement_satisfied_for?(:f1).should be_true
+    context "when requirement was defined as Proc with arity == 0" do
+      it "returns false if proc() == false" do
+        subject = FactChecker::Definition.new([:f1], nil, {:f1 => lambda{false}})
+        subject.requirement_satisfied_for?(nil, :f1).should be_false
+      end
+      it "returns true if proc() == true" do
+        subject = FactChecker::Definition.new([:f1], nil, {:f1 => lambda{true}})
+        subject.requirement_satisfied_for?(nil, :f1).should be_true
       end
     end
 
     context "when requirement was defined as something else" do
+      subject { FactChecker::Definition.new([:f1], nil, {:f1 => "wrong"}) }
       it "raises RuntimeError" do
-        subject.requirements[:f1] = :something_else
-        lambda{ subject.requirement_satisfied_for?(:f1) }.should raise_error(RuntimeError)
+        lambda{ subject.requirement_satisfied_for?(nil, :f1) }.should raise_error(RuntimeError)
       end
     end
   end
 
   describe "#fact_accomplished?" do
     context "when fact is unknown" do
-      subject { FactChecker::Base2.new([:f2], nil, {:f1 => true_block}) }
-      it("always returns false") { subject.fact_accomplished?(:f1).should be_false }
+      subject { FactChecker::Definition.new([:f2], nil, {:f1 => nil_block}) }
+      it("always returns false") { subject.fact_accomplished?(nil, :f1).should be_false }
     end
 
     context "when fact is known and" do
       context "has no dependencies" do
-        subject { FactChecker::Base2.new([:f1], nil, {:f1 => validity_block}) }
-
+        subject { FactChecker::Definition.new([:f1], nil, {:f1 => lambda{|o| o.size > 3}}) }
         it("returns true if requirement satisfied") do
-          allow(subject).to receive(:valid?) { true }
-          subject.fact_accomplished?(:f1).should be_true
+          subject.fact_accomplished?("String", :f1).should be_true
         end
-
         it "returns false if requirement not satisfied" do
-          allow(subject).to receive(:valid?) { false }
-          subject.fact_accomplished?(:f1).should be_false
+          subject.fact_accomplished?("Str", :f1).should be_false
         end
       end
 
       context "has only unsatisfied dependencies" do
-        subject { FactChecker::Base2.new([:f1, :f2], {:f1 => :f2}, {:f1 => true_block, :f2 => false_block}) }
-
+        subject { FactChecker::Definition.new([:f1, :f2], {:f1 => :f2}, {:f1 => lambda{true}, :f2 => nil_block}) }
         it "returns false" do
-          subject.fact_accomplished?(:f1).should be_false
+          subject.fact_accomplished?("something", :f1).should be_false
         end
       end
 
       context "has both satisfied and unsatisfied dependencies" do
-        subject {
-          FactChecker::Base2.new(
-            [:f1, :f2, :f3, :f4],
-            {:f1 => [:f2, :f3], :f3 => :f4},
-            {:f2 => true_block, :f3 => true_block, :f4 => false_block}
-          )
-        }
-
+        subject { FactChecker::Definition.new([:f1, :f2, :f3, :f4], {:f1 => [:f2, :f3], :f3 => :f4}, {:f2 => size_block, :f3 => size_block, :f4 => nil_block}) }
         it "returns false" do
-          subject.fact_accomplished?(:f1).should be_false
+          subject.fact_accomplished?("something", :f1).should be_false
         end
       end
 
       context "has only satisfied dependencies" do
         subject {
-          FactChecker::Base2.new(
+          FactChecker::Definition.new(
             [:f1, :f2, :f3, :f4],
             {:f1 => [:f2, :f3], :f3 => :f4},
-            {:f1 => validity_block, :f2 => true_block, :f3 => true_block }
+            {:f1 => lambda{|o| o.size == 4}, :f2 => lambda{|o| o.size < 5}, :f3 => lambda{|o| o.size > 2} }
           )
         }
 
-        it "returns true if requirement satisfied" do
-          allow(subject).to receive(:valid?) { true }
-          subject.fact_accomplished?(:f1).should be_true
+        it "returns true if fact has no requirement" do
+          subject.fact_accomplished?("something", :f4).should be_true
         end
 
         it "returns false if requirement not satisfied" do
-          allow(subject).to receive(:valid?) { false }
-          subject.fact_accomplished?(:f1).should be_false
+          subject.fact_accomplished?("somet", :f1).should be_false
+        end
+
+        it "returns true if all requirement are satisfied" do
+          subject.fact_accomplished?("some", :f1).should be_true
         end
       end
     end
@@ -120,19 +119,19 @@ describe FactChecker::Base2 do
   describe "#fact_possible?" do
     context "when fact is unknown" do
       it "returns true" do
-        subject.fact_possible?(:x).should be_true
+        subject.fact_possible?(nil, :x).should be_true
       end
     end
 
     context "when fact is known" do
       it "returns true if dependencies satisfied (even if requirement is not satisfied)" do
-        subject = FactChecker::Base2.new([:f1, :f2], {:f1 => :f2}, {:f1 => false_block, :f2 => true_block})
-        subject.fact_possible?(:f1).should be_true
+        subject = FactChecker::Definition.new([:f1, :f2], {:f1 => :f2}, {:f1 => nil_block, :f2 => to_i_block})
+        subject.fact_possible?(1, :f1).should be_true
       end
 
       it "returns false if dependencies unsatisfied (even if requirement is satisfied)" do
-        subject = FactChecker::Base2.new([:f1, :f2], {:f1 => :f2}, {:f1 => true_block, :f2 => false_block})
-        subject.fact_possible?(:f1).should be_false
+        subject = FactChecker::Definition.new([:f1, :f2], {:f1 => :f2}, {:f1 => to_i_block, :f2 => nil_block})
+        subject.fact_possible?(1, :f1).should be_false
       end
     end
   end
@@ -178,7 +177,7 @@ describe FactChecker::Base2 do
 
     context "called with (:fact_name => :dependency) {...}" do
       subject do
-        FactChecker::Base2.new.tap do |checker|
+        FactChecker::Definition.new.tap do |checker|
           checker.def_fact(:f1)
           checker.def_fact(:f2 => :f1) { 'bar' }
         end
@@ -199,7 +198,7 @@ describe FactChecker::Base2 do
 
     context "called again for the same fact_name" do
       subject do
-        FactChecker::Base2.new.tap do |checker|
+        FactChecker::Definition.new.tap do |checker|
           checker.def_fact(:f1 => :f2) {}
           checker.def_fact(:f1)
         end
@@ -233,18 +232,18 @@ describe FactChecker::Base2 do
     end
   end
 
-  describe "3 *_facts methods, i.e." do
-    subject { FactChecker::Base2.new([:f1, :f2, :f3], {:f1 => :f2}, {:f1 => true_block, :f2 => false_block }) }
+  context "has 3 *_facts methods, i.e." do
+    subject { FactChecker::Definition.new([:f1, :f2, :f3], {:f1 => :f2}, {:f2 => nil_block, :f3 => lambda{false} }) }
 
     describe "#accomplished_facts" do
       it "returns accomplished facts - ones with both dependencies and requirements satisfied" do
-        subject.accomplished_facts.should == [:f3]
+        subject.accomplished_facts(nil).should == [:f1, :f2]
       end
     end
 
     describe "#possible_facts" do
-      it "returns possible facts - ones with dependencies but not necessarily requirements satisfied" do
-        subject.possible_facts.should == [:f2, :f3]
+      it "returns possible facts - ones with dependencies but not requirements satisfied" do
+        subject.possible_facts("SomeString").should == [:f2, :f3]
       end
     end
 

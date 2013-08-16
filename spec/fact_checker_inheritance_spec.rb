@@ -7,7 +7,7 @@ describe 'FactCheckerInheritance' do
     subject { ChildOfClassWithFacts }
 
     it { should respond_to :def_fact }
-    its(:fact_checker) { should be_kind_of FactChecker::Base }
+    its(:fact_checker) { should be_kind_of FactChecker::Definition }
 
     describe 'context for inherited facts' do
       let(:target) { ChildOfClassWithFacts.new }

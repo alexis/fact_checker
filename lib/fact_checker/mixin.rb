@@ -16,7 +16,7 @@ module FactChecker
     end
 
     def fact_checker
-      @fact_checker ||= FactChecker::Base.new
+      @fact_checker ||= FactChecker::Definition.new
     end
   end
 

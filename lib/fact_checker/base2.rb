@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 module FactChecker
-  class Base
+  class Base2
     attr_accessor :facts, :dependencies, :requirements
 
     def initialize(facts = nil, deps = nil, reqs = nil)
@@ -17,36 +17,40 @@ module FactChecker
       @requirements = orig.requirements.dup
     end
 
-    def accomplished_facts(context)
-      facts.select{ |fact| fact_accomplished?(context, fact) }
+    # Checks if requirement for the fact is satisfied (no dependency checks here)
+    def requirement_satisfied_for?(fact)
+      fact = ensure_symbol(fact)
+      req  = @requirements[fact]
+
+      return false  unless @facts.include?(fact)
+      return true   if req.nil?
+      fail RuntimeError, "requirement #{req} is not callable"  unless req.respond_to?(:call)
+
+      instance_eval &req
     end
 
-    def possible_facts(context)
-      facts.select{ |fact| fact_possible?(context, fact) }
+    def check_requirement(req)
+      instance_eval &req
     end
 
     # Checks if requirement and dependency for the fact are satisfied
-    def fact_accomplished?(context, fact)
+    def fact_accomplished?(fact)
       fact = ensure_symbol(fact)
-      fact_possible?(context, fact) && requirement_satisfied_for?(context, fact)
+      fact_possible?(fact) && requirement_satisfied_for?(fact)
     end
 
     # Checks if dependency for the fact is satisfied
-    def fact_possible?(context, fact)
+    def fact_possible?(fact)
       fact = ensure_symbol(fact)
-      [* @dependencies[fact] || []].all?{ |dep| fact_accomplished?(context, dep) }
+      [* @dependencies[fact] || []].all?{ |dep| fact_accomplished?(dep) }
     end
 
-    # Checks if requirement for the fact is satisfied (no dependency checks here)
-    def requirement_satisfied_for?(context, fact)
-      fact = ensure_symbol(fact)
-      return false unless @facts.include?(fact)
+    def accomplished_facts
+      facts.select{ |fact| fact_accomplished?(fact) }
+    end
 
-      case req = @requirements[fact]
-      when Proc     then req.arity < 1 ? req.call : req.call(context)
-      when NilClass then true
-      else raise RuntimeError, "can't check this fact - wrong requirement"
-      end
+    def possible_facts
+      facts.select{ |fact| fact_possible?(fact) }
     end
 
     # Syntactic sugar, adds fact with its requirement and dependency. Examples:

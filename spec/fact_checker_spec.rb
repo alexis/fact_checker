@@ -20,7 +20,7 @@ describe FactChecker do
     subject { ClassWithFacts }
 
     it { should respond_to :def_fact }
-    its(:fact_checker) { should be_kind_of FactChecker::Base }
+    its(:fact_checker) { should be_kind_of FactChecker::Definition }
 
     context 'instance methods' do
       let(:target) { ClassWithFacts.new }
