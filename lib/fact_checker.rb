@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-require 'fact_checker/definition'
-require 'fact_checker/base2'
 require 'fact_checker/version'
-require 'fact_checker/mixin'
+require 'fact_checker/methods'
+require 'fact_checker/result'
