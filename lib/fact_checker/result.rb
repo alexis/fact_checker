@@ -2,17 +2,17 @@
 
 module FactChecker
   class Result
-    def initialize(pre_res, req_res)
-      @pre_res = pre_res
-      @req_res = req_res
+    def initialize(dependency_state, requirement_state)
+      @dependency_state = dependency_state
+      @requirement_state = requirement_state
     end
 
     def valid?
-      @pre_res && @req_res
+      @dependency_state && @requirement_state
     end
 
     def available?
-      @pre_res
+      @dependency_state
     end
   end
 end
