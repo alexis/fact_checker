@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-describe FactChecker::Methods do
+describe FactChecker do
   context "when included into a class" do
 
-    let(:klass) { Class.new { include FactChecker::Methods } }
+    let(:klass) { Class.new { include FactChecker } }
 
     describe ".facts" do
       it "exists" do
@@ -27,14 +27,14 @@ describe FactChecker::Methods do
       end
 
       it "returns independent results for independent classes" do
-        klass1 = Class.new { include FactChecker::Methods; define_fact(:x) {} }
-        klass2 = Class.new { include FactChecker::Methods; define_fact(:y) {} }
+        klass1 = Class.new { include FactChecker; define_fact(:x) {} }
+        klass2 = Class.new { include FactChecker; define_fact(:y) {} }
         expect(klass1.facts).to eq([:x])
         expect(klass2.facts).to eq([:y])
       end
 
       it "returns one-way dependent results for superclass and subclasses" do
-        klass1 = Class.new { include FactChecker::Methods; define_fact(:x) {} }
+        klass1 = Class.new { include FactChecker; define_fact(:x) {} }
         klass2 = Class.new(klass1) { define_fact(:y) {} }
         klass3 = Class.new(klass2) { define_fact(:z) {} }
         klass1.class_eval { define_fact(:q) {} }

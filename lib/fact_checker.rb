@@ -2,4 +2,4 @@
 
 require 'fact_checker/version'
 require 'fact_checker/result'
-require 'fact_checker/methods'
+require 'fact_checker/mixin'
