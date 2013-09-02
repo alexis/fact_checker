@@ -43,6 +43,11 @@ describe FactChecker do
         expect(klass2.facts).to eq([:x, :q, :y])
         expect(klass3.facts).to eq([:x, :q, :y, :z])
       end
+
+      it "returns symbols even when facts were defined with string names" do
+        klass.define_fact('x') {}
+        expect(klass.facts).to eq([:x])
+      end
     end
 
 
@@ -93,7 +98,7 @@ describe FactChecker do
         end
       end
 
-      context "when called with (:name => dependencies, &block)" do
+      context "when called with (:name => dependency_names, &block)" do
         it "defines an instance method #name" do
           expect(klass.instance_methods).to_not include(:x)
           klass.define_fact(:x => []) {}
@@ -106,7 +111,7 @@ describe FactChecker do
           expect(klass.instance_methods).to include(:x?)
         end
 
-        context "where the newly defined instance methods" do
+        context "and the newly defined instance methods:" do
           let(:instance) { klass.new }
 
           describe "#<name>" do
@@ -201,7 +206,21 @@ describe FactChecker do
         end
       end
 
-      context "when called with (:_underscored_name => dependencies, &block)" do
+      context "when called with ('name' => string_deppendency_names, &block)" do
+        it "defines an instance method #name" do
+          expect(klass.instance_methods).to_not include(:x)
+          klass.define_fact('x' => []) {}
+          expect(klass.instance_methods).to include(:x)
+        end
+
+        it "defines an instance method #name?" do
+          expect(klass.instance_methods).to_not include(:x?)
+          klass.define_fact('x' => []) {}
+          expect(klass.instance_methods).to include(:x?)
+        end
+      end
+
+      context "when called with (:_underscored_name => dependency_names, &block)" do
         it "marks new #_underscored_name method as private" do
           klass.define_fact(:_x) {}
           expect{ klass.new._x }.to raise_error

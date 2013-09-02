@@ -11,7 +11,7 @@ module FactChecker
 
       name, dependencies = arg.is_a?(Hash) ? arg.to_a.flatten(1) : [arg, []]
 
-      (@fact_checker_facts ||= []) << name
+      (@fact_checker_facts ||= []) << name.to_sym
 
       define_method(name) do
         dependencies_satisfied = [*dependencies].all?{ |dep_name| send(dep_name).valid? }
