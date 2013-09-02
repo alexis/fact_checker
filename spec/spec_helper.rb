@@ -1,10 +1,9 @@
 # encoding: utf-8
 
-$:.unshift File.expand_path('../lib', __FILE__)
-
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start { add_filter '/spec/' }
 
+$:.unshift File.expand_path('../lib', __FILE__)
 require 'fact_checker'
 Dir['./spec/support/**/*.rb'].each { |f| require f }
 
