@@ -57,8 +57,8 @@ define_fact(:step5 => :step3)           { ready_for_approvement? }
 define_fact(:step6 => [:step4, :step5]) { approved? }
 
 def state_of(step)
-  return 'completed'         if valid?(step)
-  return 'ready_for_action'  if available?(step)
+  return 'completed'         if public_send(step).valid?
+  return 'ready_for_action'  if public_send(step).available?
   return 'not_available'
 end
 ```
