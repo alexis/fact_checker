@@ -105,8 +105,8 @@ def step6_valid?
 end
 
 def state_of(step)
-  return 'completed'         if self.send(step + '_valid?')
-  return 'ready_for_action'  if self.send(step + '_available?')
+  return 'completed'         if self.public_send(step + '_valid?')
+  return 'ready_for_action'  if self.public_send(step + '_available?')
   return 'not_available'
 end
 ```
