@@ -1,5 +1,4 @@
-# Fact Checker [![Build Status](https://secure.travis-ci.org/alexis/fact_checker.png?branch=master)](http://travis-ci.org/alexis/fact_checker)
-[![Code Climate](https://codeclimate.com/github/alexis/fact_checker.png)](https://codeclimate.com/github/alexis/fact_checker)
+# Fact Checker [![Build Status](https://secure.travis-ci.org/alexis/fact_checker.png?branch=master)](http://travis-ci.org/alexis/fact_checker) [![Code Climate](https://codeclimate.com/github/alexis/fact_checker.png)](https://codeclimate.com/github/alexis/fact_checker)
 
   Simple ruby gem to define and check hierarchically dependent "facts" about objects.
 
