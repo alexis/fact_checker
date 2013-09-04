@@ -13,6 +13,8 @@ Gem::Specification.new do |s|
   s.summary     = %q{Checks facts which may depend on other facts}
   s.description = %q{Simple gem to check hierarchically dependent "facts" about objects}
 
+  s.license = 'MIT'
+
   s.rubyforge_project = "fact_checker"
 
   s.files         = `git ls-files`.split("\n")
@@ -25,7 +27,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'bundler'
-  s.add_development_dependency 'rspec',     '~> 2.14'
+  s.add_development_dependency 'rspec', '~> 2.14'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'debugger'
 end
